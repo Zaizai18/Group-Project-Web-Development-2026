@@ -1,71 +1,76 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import "./reviewsForm.jsx";
+import { supabase } from "./supabaseClient.js";
 //sql needs to be imported to 
+
+const processCountries = (data) => {
+    const likedTrips = data.filter(trip => trip.liked === true);
+    const trip_counts = {};
+
+    
+    likedTrips.forEach(trip => {
+        // Corrected variable name: trip.destination_name
+        const name = trip.destination_name; 
+        const activity = trip.suggestion_name; 
+
+        if (!name[name])
+        {
+            trip_counts[name] = {total: 0, activites: {} };
+        }
+
+        trip_counts[name] += 1;
+    });
+
+    return Object.entries(trip_counts)
+        .map(([name, stats]) => {
+            const top_activity = Object.entries(stats.activites).reduce((a, b) => (a[1] > b[1] ? a : b));
+            return {
+                name: name,
+                count: stats.total,
+                topActivity: stats.topActivity
+            };
+        })
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+};
 
 function TravelWrap()
 {
-    const [forminput, setOutput] = useState({
-        place_name: '',
-        comment: '',
-        liked: true,
-        recommend: true 
-    });
+    //get the country data and the function to change it 
+    const [stats, setStats] = useState([]);
 
-    const handleChange = (e) => {
-        const {name, value} = e.target;
-        setOutput({...forminput, [name]: value});
-    };
-
-    const handleSubmit =  aysnc (e) => {
-        e.preventDefault();
-        
-        //call supabase to insert form input state
-        const {data, error} = await supabase 
-        .from('Travel Wrap')
-        .insert([   //add the inputed data from sql onto the table
-            {
-                place_name: forminput.place_name,
-                comment: forminput.comment,
-                liked: forminput.liked,
-                recommend: forminput.recommend
+    //page life cycle
+    useEffect(() => {
+        async function getMyData() {
+            const {data, error} = await supabase.from('reviews_page').select('suggestion_name, liked, destination_name');
+            if (!error & data) {
+                const topFive = processCountries(data);
+                setStats(topFive);
+            } else {
+                console.error("error fetching wrap:", error)
             }
-        ]),
-
-        if (error) {
-            
         }
-
-
-
-        //clear the form so
-    };
-
+        getMyData();
+    }, []);
+    
     return (
         <div className="review-container">
-            <h2>Rate our Recommendations!</h2>
-            <form className="reviewForm">
-                <input name="place_name" type="text" placeholder="Country" onChange={handleChange} />
-                <textarea name="comment" value={forminput.place_name} onChange={handleChange}/>
-                <div className="buttons">
-                    <button
-                        type="button"
-                        className={forminput.liked ? "active" : ""}
-                        onClick={() => setOutput({...forminput, liked: true})}
-                    >
-                    👍 
-                    </button>
-                    <button
-                        type="button"
-                        className={forminput.liked ? "active" : ""}
-                        onClick={() => setOutput({...forminput, liked: false})}
-                    >
-                    👎 
-                    </button>
-                </div>
-                <button type="submit" > Submit</button>
-            </form>
+            <h2>Your Travel History Wrapped!</h2>
             
-        </div>//ask SQL database for data
+            <p> You visited {item[0].name} the most! You enjoyed {}</p>
+            <table>
+                <tbody>
+                    {stats.map((item, index) => (
+                        <tr key={index}>
+                            <td>{item.name}</td>
+                            <td>{item.count} visits</td>
+                            <td>{item.topActivity} </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>  
     );
 }
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { supabase } from "./supabaseClient";
 import { useState } from "react";
 
 function reviewsForm()
@@ -6,7 +7,8 @@ function reviewsForm()
     const [forminput, setOutput] = useState({
         suggestion_name: '',
         liked: true,
-        feedback: '' 
+        feedback: '',
+        destination_suggestion: ''
     });
 
     const handleChange = (e) => {
@@ -14,51 +16,64 @@ function reviewsForm()
         setOutput({...forminput, [name]: value});
     };
 
-    const handleSubmit =  aysnc (e) => {
+    const handleSubmit =  async (e) => {
         e.preventDefault();
         
         //call supabase to insert form input state
         const {data, error} = await supabase
-        .from('reviews_page')
-        .insert([   //add the inputed data from sql onto the table
+        .from('reviews_page').insert([   //add the inputed data from sql onto the table
             {
                 suggestion_name: forminput.suggestion_name,
                 liked: forminput.liked,
-                feedback: forminput.feedback
+                feedback: forminput.feedback,
+                destination_suggestion: forminput.destination_suggestion,   
             }
-        ]),
+        ]);
 
         if (error) {
+            console.error("error inserting data: ", error.message);
+            alert("something went wrong submitting!");
+        } else {
+            console.log("Success! data saved:", data);
+            alert("review is submitted!");
 
+            //clear the form after submitted
+            setOutput({
+                suggestion_name: '',
+                liked: true,
+                feedback: '',
+                destination_suggestion: ''            
+            });
         }
-
     };
 
     return (
         <div className="review-container">
             <h2>Rate our Recommendations!</h2>
-            <form className="reviewForm">
-                <input name="place_name" type="text" placeholder="Country" onChange={handleChange} />
-                <textarea name="comment" value={forminput.place_name} onChange={handleChange}/>
+            <form className="reviewForm" onSubmit={handleSubmit}>
+                <input name="suggestion_name" type="text" placeholder="what did we suggest?" value={forminput.suggestion_name} onChange={handleChange} />
+                <textarea name="comment" value={forminput.suggestion_name} onChange={handleChange}/>
                 <div className="buttons">
                     <button
                         type="button"
-                        className={forminput.liked ? "active" : ""}
+                        className={forminput.liked === true ? "active" : ""}
                         onClick={() => setOutput({...forminput, liked: true})}
                     >
                     👍 
                     </button>
                     <button
                         type="button"
-                        className={forminput.liked ? "active" : ""}
+                        className={forminput.liked === false ? "active" : ""}
                         onClick={() => setOutput({...forminput, liked: false})}
                     >
                     👎 
                     </button>
                 </div>
-                <button type="submit" > Submit</button>
-            </form>
-            
+                <textarea name="feedback" type="text" placeholder="give us feedback on what u liked about our suggestions? is this a trip you want to make in the future again?" value={forminput.feedback} onChange={handleChange}></textarea>
+
+                <textarea name="destination_suggestion" type="text" placeholder="where did you go?" value={forminput.destination_suggestion} onChange={handleChange}></textarea>
+                <button type="submit"> Submit</button>
+            </form> 
         </div>
     );
 }
