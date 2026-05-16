@@ -8,7 +8,7 @@ function reviewsForm()
         suggestion_name: '',
         liked: true,
         feedback: '',
-        destination_suggestion: ''
+        destination_name: ''
     });
 
     const handleChange = (e) => {
@@ -26,7 +26,7 @@ function reviewsForm()
                 suggestion_name: forminput.suggestion_name,
                 liked: forminput.liked,
                 feedback: forminput.feedback,
-                destination_suggestion: forminput.destination_suggestion,   
+                destination_name: forminput.destination_name,   
             }
         ]);
 
@@ -42,7 +42,7 @@ function reviewsForm()
                 suggestion_name: '',
                 liked: true,
                 feedback: '',
-                destination_suggestion: ''            
+                destination_name: ''            
             });
         }
     };
@@ -71,7 +71,7 @@ function reviewsForm()
                 </div>
                 <textarea name="feedback" type="text" placeholder="give us feedback on what u liked about our suggestions? is this a trip you want to make in the future again?" value={forminput.feedback} onChange={handleChange}></textarea>
 
-                <textarea name="destination_suggestion" type="text" placeholder="where did you go?" value={forminput.destination_suggestion} onChange={handleChange}></textarea>
+                <textarea name="destination_name" type="text" placeholder="where did you go?" value={forminput.destination_name} onChange={handleChange}></textarea>
                 <button type="submit"> Submit</button>
             </form> 
         </div>

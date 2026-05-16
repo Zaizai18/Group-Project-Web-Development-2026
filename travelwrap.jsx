@@ -10,16 +10,16 @@ const processCountries = (data) => {
 
     
     likedTrips.forEach(trip => {
-        // Corrected variable name: trip.destination_name
         const name = trip.destination_name; 
         const activity = trip.suggestion_name; 
 
-        if (!name[name])
-        {
-            trip_counts[name] = {total: 0, activites: {} };
+        if (!trip_counts[name]) {
+            trip_counts[name] = { total: 0, activities: {} }; // Fixed spelling
         }
 
-        trip_counts[name] += 1;
+        trip_counts[name].total += 1;
+        // Correctly target the specific activity inside the object
+        trip_counts[name].activities[activity] = (trip_counts[name].activities[activity] || 0) + 1;
     });
 
     return Object.entries(trip_counts)
@@ -44,7 +44,7 @@ function TravelWrap()
     useEffect(() => {
         async function getMyData() {
             const {data, error} = await supabase.from('reviews_page').select('suggestion_name, liked, destination_name');
-            if (!error & data) {
+            if (!error && data) {
                 const topFive = processCountries(data);
                 setStats(topFive);
             } else {
@@ -55,22 +55,35 @@ function TravelWrap()
     }, []);
     
     return (
-        <div className="review-container">
-            <h2>Your Travel History Wrapped!</h2>
-            
-            <p> You visited {item[0].name} the most! You enjoyed {}</p>
-            <table>
-                <tbody>
-                    {stats.map((item, index) => (
-                        <tr key={index}>
-                            <td>{item.name}</td>
-                            <td>{item.count} visits</td>
-                            <td>{item.topActivity} </td>
+    <div className="review-container">
+        <h2>Your Travel History Wrapped!</h2>
+        
+        {stats.length > 0 ? (
+            <>
+                <p>You visited {stats[0].name} the most! You enjoyed {stats[0].topActivity}.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Destination</th>
+                            <th>Visits</th>
+                            <th>Top Activity</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>  
+                    </thead>
+                    <tbody>
+                        {stats.map((item, index) => (
+                            <tr key={index}>
+                                <td>{item.name}</td>
+                                <td>{item.count} visits</td>
+                                <td>{item.topActivity}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </>
+        ) : (
+            <p>No travel history yet! Submit a review to see your wrap-up.</p>
+        )}
+    </div>  
     );
 }
 
