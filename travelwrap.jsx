@@ -4,7 +4,7 @@ import "./reviewsForm.jsx";
 import { supabase } from "./supabaseClient.js";
 //sql needs to be imported to 
 
-const processCountries = (data) => {
+const ProcessCountries = (data) => {
     const likedTrips = data.filter(trip => trip.liked === true);
     const trip_counts = {};
 
@@ -43,7 +43,7 @@ function TravelWrap()
     //page life cycle
     useEffect(() => {
         async function getMyData() {
-            const {data, error} = await supabase.from('reviews_page').select('suggestion_name, liked, destination_name');
+            const {data, error} = await supabase.from('reviews_page').select('*');
             if (!error && data) {
                 const topFive = processCountries(data);
                 setStats(topFive);
@@ -58,9 +58,9 @@ function TravelWrap()
     <div className="review-container">
         <h2>Your Travel History Wrapped!</h2>
         
-        {stats.length > 0 ? (
-            <>
+        {stats.length > 0 && (
                 <p>You visited {stats[0].name} the most! You enjoyed {stats[0].topActivity}.</p>
+        )}
                 <table>
                     <thead>
                         <tr>
@@ -79,10 +79,6 @@ function TravelWrap()
                         ))}
                     </tbody>
                 </table>
-            </>
-        ) : (
-            <p>No travel history yet! Submit a review to see your wrap-up.</p>
-        )}
     </div>  
     );
 }
