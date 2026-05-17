@@ -1,5 +1,5 @@
 import React from 'react';
-import recommendations from './data/recommendations.json';
+import recommendations from '../data/recommendations.json';
 
 export default function homeForm({
   username,
