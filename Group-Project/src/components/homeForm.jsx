@@ -1,4 +1,5 @@
 import React from 'react';
+import recommendations from './data/recommendations.json';
 
 export default function homeForm({
   username,
@@ -18,6 +19,19 @@ export default function homeForm({
   const months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
   const dietaryOptions = ["Halal", "Vegan", "Vegetarian", "No peanuts", "No eggs", "No seafood", "No Soy", "No Milk"];
 
+  const getFilteredSuggestions = (userInput) => {
+  // Convert input to lowercase to avoid case-sensitivity edge cases
+  const searchKey = userInput.toLowerCase().trim();
+
+  return recommendations.filter((item) => {
+    // Check if the keyword exists in the destination, cuisine, or tags array
+    return (
+      item.destination.toLowerCase().includes(searchKey) ||
+      item.cuisine.toLowerCase().includes(searchKey) ||
+      item.keywords.some(tag => tag.toLowerCase().includes(searchKey))
+    );
+  });
+  };
   return (
     <form onSubmit={handleSubmitPreferences} className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-md border border-gray-300 text-left">
       <div className="border-b border-gray-200 pb-4 mb-6">
