@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "destination": "Tokyo",
+        "cuisine": "Japanese",
+        "suggestion": "Visit the Tsukiji Outer Market for fresh sushi.",
+        "keywords": ["sushi", "fish", "japan", "tokyo"]
+    },
+    {
+        "id": 2,
+        "destination": "Paris",
+        "cuisine": "French",
+        "suggestion": "Try the croissants at Du Pain et des Idées.",
+        "keywords": ["pastry", "bread", "france", "paris"]
+    }   
+]

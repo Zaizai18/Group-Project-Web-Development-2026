@@ -44,6 +44,21 @@ export default function Home() {
       dietary_restrictions: finalDietary
     }));
 
+    const { data, error } = await supabase
+    .from('reviews_page') // Make sure this matches your table name exactly
+    .insert([
+      { 
+        username: username,
+        cuisine: favoriteCuisine,
+        travel_months: selectedMonths, 
+        dietary_restrictions: finalDietary,
+        liked: true // Setting this to true so it shows up in your "Wrapped" logic
+      }
+    ]);
+
+  if (error) {
+    console.error("Supabase Error:", error.message);
+  }
     alert("Preferences saved successfully! Let's tailor your journey.");
     
     setUsername('');

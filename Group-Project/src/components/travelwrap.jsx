@@ -17,6 +17,18 @@ const processCountries = (data) => {
         trip_counts[name].activities[activity] = (trip_counts[name].activities[activity] || 0) + 1;
     });
 
+    const processedStats = Object.keys(trip_counts).map(name => ({
+        name: name,
+        count: trip_counts[name].total,
+        // This finds the activity with the highest count for this destination
+        topActivity: Object.entries(trip_counts[name].activites)
+            .sort((a, b) => b[1] - a[1])[0][0]
+    })).sort((a, b) => b.count - a.count); // Sort by highest visit count
+
+    // 3. UPDATE STATE
+    setStats(processedStats.slice(0, 5)); // Only keep the top 5
+    setLikedTripsCount(likedTrips.length);
+
     return Object.entries(trip_counts)
         .map(([name, stats]) => {
             const activityEntries = Object.entries(stats.activities);
@@ -42,7 +54,7 @@ function TravelWrap() {
         async function getMyData() {
             const { data, error } = await supabase
                 .from('reviews_page')
-                .select('destination_name, liked, suggestion_name');
+                .select('*');
                 
             if (!error && data) {
                 const topFive = processCountries(data);
@@ -87,8 +99,12 @@ function TravelWrap() {
                     </table>
                 </>
             ) : (
-                <p className="text-center text-gray-500 py-8">No matching logs found yet! Submit liked spots on the reviews page to build your history summary footprint.</p>
-            )}
+            <div>
+                <h2>Travel Wrapped</h2>
+                <p>Keep exploring! Your travel wrap unlocks once you've liked more than 5 trips.</p>
+                <p>Current progress: {likedTrips.length} / 6</p>
+            </div> 
+            )}   
         </div>  
     );
 }
