@@ -2,36 +2,31 @@
     {
         "id": 1,
         "destination": "Tokyo",
-        "favoritecuisine": "Japanese",
-        "travel_months": ["march", "april", "may"], 
+        "cuisine": "Japanese",
+        "travel_months": ["march", "april", "may"],
         "suggestion": "Visit the Tsukiji Outer Market for fresh sushi.",
-        "keywords": ["sushi", "fish", "japan", "tokyo"],
-        "dietaryOptions": ["Vegan", "Vegetarian", "No peanuts", "No eggs", "No Milk"]
-
+        "keywords": ["sushi", "fish", "japan", "tokyo"]
     },
     {
         "id": 2,
         "destination": "Paris",
-        "favoritecuisine": "French",
+        "cuisine": "French",
         "travel_months": ["may", "june", "september", "october"], 
         "suggestion": "Try the croissants at Du Pain et des Idées.",
-        "keywords": ["pastry", "bread", "france", "paris"],
-        "dietaryOptions": ["Halal", "Vegan", "Vegetarian", "No peanuts", "No eggs", "No seafood", "No Soy", "No Milk"]
+        "keywords": ["pastry", "bread", "france", "paris"]
     },
     {
         "id": 3,
         "destination": "Taiwan",
-        "favoritecuisine": "Chinese",
+        "cuisine": "Chinese",
         "travel_months": ["april", "may", "september", "october"],
-        "keywords": ["great wall", "rice", "national palace musuem", "taroko gorge", "night markets"],
-        "dietaryOptions": ["Vegan", "Vegetarian", "No peanuts", "No eggs", "No seafood", "No Milk"]
+        "keywords": ["great wall", "rice", "national palace musuem", "taroko gorge", "night markets"]
     },
     {
         "id": 4,
         "destination": "Hawaii",
-        "favoritecuisine": "hawian", 
+        "cuisine": "hawian", 
         "travel_months": ["april", "may", "october", "september"],
-        "keywords": ["pearl harbor", "diamong head", "hiking", "snorkeling", "volcanoes national park", "beaches", "tan", "Bahamas"],
-        "dietaryOptions": ["Halal", "Vegan", "Vegetarian", "No peanuts", "No eggs", "No seafood", "No Soy", "No Milk"]
+        "keywords": ["pearl harbor", "diamong head", "hiking", "snorkeling", "volcanoes national park", "beaches", "tan", "Bahamas"]
     }
 ]

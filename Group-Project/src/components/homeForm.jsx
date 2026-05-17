@@ -32,6 +32,7 @@ export default function homeForm({
     );
   });
   };
+  
   return (
     <form onSubmit={handleSubmitPreferences} className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-md border border-gray-300 text-left">
       <div className="border-b border-gray-200 pb-4 mb-6">
