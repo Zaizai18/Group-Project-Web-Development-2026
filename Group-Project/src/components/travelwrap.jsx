@@ -24,20 +24,19 @@ const processCountries = (data) => {
     if (Object.keys(trip_counts).length === 0) return [];
 
     return Object.entries(trip_counts)
-        .map(([name, stats]) => {
-            const activityEntries = Object.entries(stats.activities || {});
-            const topActivity = activityEntries.length > 0 
-                ? activityEntries.reduce((a, b) => (a[1] > b[1] ? a : b))[0] 
-                : "Exploration";
-
-            return {
-                name: name,
-                count: stats.total,
-                topActivity: topActivity
-            };
-        })
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 5);
+    .map(([name, s]) => {                              // just 's' instead of 'stats'
+        const activityEntries = Object.entries(s.activities || {});
+        const topActivity = activityEntries.length > 0 
+            ? activityEntries.reduce((a, b) => (a[1] > b[1] ? a : b))[0] 
+            : "Exploration";
+        return {
+            name: name,
+            count: s.total,
+            topActivity: topActivity
+        };
+    })
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
 };
 
 function TravelWrap() {
