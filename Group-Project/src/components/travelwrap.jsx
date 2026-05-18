@@ -18,32 +18,36 @@ const processCountries = (data) => {
     });
 
     return Object.entries(trip_counts)
-    .map(([name, s]) => {                        // rename stats → s
-        const activityEntries = Object.entries(s.activities);
-        const topActivity = activityEntries.length > 0 
-            ? activityEntries.reduce((a, b) => (a[1] > b[1] ? a : b))[0] 
-            : "Exploration";
-        return {
-            name: name,
-            count: s.total,                      // rename stats → s
-            topActivity: topActivity
-        };
-    })
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
+        .map(([name, stats]) => {
+            const activityEntries = Object.entries(stats.activities);
+            const topActivity = activityEntries.length > 0 
+                ? activityEntries.reduce((a, b) => (a[1] > b[1] ? a : b))[0] 
+                : "Exploration";
+
+            return {
+                name: name,
+                count: stats.total,
+                topActivity: topActivity
+            };
+        })
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
 };
 
 function TravelWrap() {
     const [stats, setStats] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [likedTripsCount, setLikedTripsCount] = useState(0);
 
     useEffect(() => {
         async function getMyData() {
             const { data, error } = await supabase
                 .from('reviews_page')
-                .select('destination_name, liked, suggestion_name');
+                .select('*');
                 
             if (!error && data) {
+                const likedTrips = data.filter(trip => trip.liked === true);
+                setLikedTripsCount(likedTrips.length);
                 const topFive = processCountries(data);
                 setStats(topFive);
             } else {
@@ -86,8 +90,12 @@ function TravelWrap() {
                     </table>
                 </>
             ) : (
-                <p className="text-center text-gray-500 py-8">No matching logs found yet! Submit liked spots on the reviews page to build your history summary footprint.</p>
-            )}
+            <div className="text-center p-10">
+                <h2 className="text-2xl font-bold text-[#0A2540] mb-4">Travel Wrapped</h2>
+                <p className="text-gray-600">Keep exploring! Your travel wrap unlocks once you've liked more than 5 trips.</p>
+                <p className="text-gray-500 mt-2">Current progress: {likedTripsCount} / 6</p>
+            </div> 
+            )}   
         </div>  
     );
 }
