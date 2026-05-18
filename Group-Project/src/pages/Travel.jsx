@@ -15,7 +15,7 @@ const LOCAL_DESTINATIONS = [
     city: "Rome",
     country: "Italy",
     season: "Summer",
-    image_url: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=400&q=80",
+    image_url: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=800&q=80",
     popular_food: "Pasta Carbonara, Pizza, & Gelato",
     activities: "Tour the Colosseum, throw a coin in the Trevi Fountain"
   },
@@ -24,9 +24,54 @@ const LOCAL_DESTINATIONS = [
     city: "Bali",
     country: "Indonesia",
     season: "Fall",
-    image_url: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&q=80",
+    image_url: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
     popular_food: "Nasi Goreng & Chicken Satay",
     activities: "Surf at Kuta beach, tour beautiful hillside temples"
+  },
+  {
+    id: 4,
+    city: "Paris",
+    country: "France",
+    season: "Spring",
+    image_url: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80",
+    popular_food: "Croissants, Escargot, & Macarons",
+    activities: "Climb the Eiffel Tower, view art collections at the Louvre"
+  },
+  {
+    id: 5,
+    city: "Reykjavik",
+    country: "Iceland",
+    season: "Winter",
+    image_url: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+    popular_food: "Kjötsúpa (Lamb Soup) & Rye Bread Ice Cream",
+    activities: "Hunt for the Northern Lights, relax in the Blue Lagoon hot springs"
+  },
+  {
+    id: 6,
+    city: "Oaxaca",
+    country: "Mexico",
+    season: "Fall",
+    image_url: "https://images.unsplash.com/photo-1512813583145-baaa340ef29f?auto=format&fit=crop&w=800&q=80",
+    popular_food: "Mole Poblano, Tlayudas, & Mezcal",
+    activities: "Celebrate Day of the Dead, explore the ruins of Monte Albán"
+  },
+  {
+    id: 7,
+    city: "New York City",
+    country: "United States",
+    season: "Winter",
+    image_url: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=800&q=80",
+    popular_food: "New York Slice Pizza, Bagels, & Cheesecake",
+    activities: "Ice skate at Rockefeller Center, see a live Broadway show"
+  },
+  {
+    id: 8,
+    city: "Cape Town",
+    country: "South Africa",
+    season: "Summer",
+    image_url: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=800&q=80",
+    popular_food: "Biltong, Bobotie, & Fresh Seafood",
+    activities: "Ride the cableway up Table Mountain, see penguins at Boulders Beach"
   }
 ];
 
@@ -56,7 +101,11 @@ export default function Travel() {
   useEffect(() => {
     loadPreferences();
     window.addEventListener('storage', loadPreferences);
-    return () => window.removeEventListener('storage', loadPreferences);
+    window.addEventListener('localPreferencesUpdated', loadPreferences);
+    return () => {
+      window.removeEventListener('storage', loadPreferences);
+      window.removeEventListener('localPreferencesUpdated', loadPreferences);
+    };
   }, []);
 
   const handleClearProfile = () => {
@@ -68,15 +117,48 @@ export default function Travel() {
     loadPreferences(); 
   };
 
-  const displayedDestinations = selectedSeason === "All" 
+  // --- DYNAMIC PREFERENCE FILTERING ENGINE ---
+  // Start with the seasonal tab selection
+  let displayedDestinations = selectedSeason === "All" 
     ? LOCAL_DESTINATIONS 
     : LOCAL_DESTINATIONS.filter(dest => dest.season === selectedSeason);
+
+  // Safely narrow items down if the traveler profile exists
+  if (preferences) {
+    displayedDestinations = displayedDestinations.filter(dest => {
+      // 1. Food Keyword matching
+      const matchesCuisine = preferences.favoriteCuisine 
+        ? dest.popular_food.toLowerCase().includes(preferences.favoriteCuisine.toLowerCase()) ||
+          dest.city.toLowerCase().includes(preferences.favoriteCuisine.toLowerCase())
+        : false;
+
+      // 2. Month-to-Season translation matrix
+      let matchesMonth = false;
+      if (preferences.travel_months && preferences.travel_months.length > 0) {
+        matchesMonth = preferences.travel_months.some(month => {
+          const cleanMonth = month.toLowerCase().trim();
+          if (dest.season === "Spring" && ["march", "april", "may"].includes(cleanMonth)) return true;
+          if (dest.season === "Summer" && ["june", "july", "august"].includes(cleanMonth)) return true;
+          if (dest.season === "Fall" && ["september", "october", "november"].includes(cleanMonth)) return true;
+          if (dest.season === "Winter" && ["december", "january", "february"].includes(cleanMonth)) return true;
+          return false;
+        });
+      }
+
+      // If no explicit values match, fallback to true so you don't instantly blank out the dashboard
+      if (!preferences.favoriteCuisine && (!preferences.travel_months || preferences.travel_months.length === 0)) {
+        return true;
+      }
+
+      return matchesCuisine || matchesMonth;
+    });
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 text-left font-sans text-xs text-slate-700">
       <div className="max-w-4xl mx-auto">
         
-        {/* Themed Header Section */}
+        {/* Header Strip */}
         <div className="mb-5 border-b border-slate-200 pb-3 flex justify-between items-center">
           <div>
             <h2 className="text-xl font-black text-[#0A2540] uppercase tracking-wide">The Global Dashboard</h2>
@@ -100,10 +182,9 @@ export default function Travel() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             
-            {/* LEFT COLUMN: THEMED SCOREBOARD & STATS */}
+            {/* SCOREBOARD & STATS METRICS PANEL */}
             <div className="flex flex-col gap-4">
               
-              {/* Theme Match Scoreboard Box */}
               <div className="bg-[#0A2540] text-white p-3.5 rounded-xl shadow-md border border-slate-800">
                 <h4 className="font-bold text-slate-300 uppercase tracking-widest text-[9px] mb-1">Global Exploration Score</h4>
                 <div className="flex items-baseline justify-between mt-1">
@@ -119,7 +200,6 @@ export default function Travel() {
                 )}
               </div>
 
-              {/* Profile Metrics */}
               <div className="bg-white p-3.5 border border-slate-200 rounded-xl shadow-sm">
                 <h4 className="font-bold text-slate-400 uppercase tracking-wider text-[9px] mb-2">Footprint Tracker</h4>
                 <div className="mb-2.5 text-slate-600">
@@ -137,12 +217,9 @@ export default function Travel() {
                 </div>
               </div>
 
-              {/* Themed Checkbox Challenges */}
               <div className="bg-white p-3.5 border border-slate-200 rounded-xl shadow-sm">
                 <h4 className="font-bold text-slate-400 uppercase tracking-wider text-[9px] mb-2.5">Active Directives</h4>
                 <div className="space-y-2.5">
-                  
-                  {/* Task 1 */}
                   <label className="flex items-start gap-2.5 cursor-pointer select-none">
                     <input 
                       type="checkbox" 
@@ -156,7 +233,6 @@ export default function Travel() {
                     </div>
                   </label>
 
-                  {/* Task 2 */}
                   <label className="flex items-start gap-2.5 cursor-pointer select-none pt-2.5 border-t border-slate-100">
                     <input 
                       type="checkbox" 
@@ -169,19 +245,16 @@ export default function Travel() {
                       <p className="text-slate-400 text-[10px]">Review your custom interactive destination tabs</p>
                     </div>
                   </label>
-
                 </div>
               </div>
 
             </div>
 
-            {/* RIGHT COLUMN: FILTER & PREMIUM RECOMENDATION CARDS */}
+            {/* SUGGESTION RESULTS STRIP & DYNAMIC CARDS LAYOUT */}
             <div className="md:col-span-2 space-y-3">
-              
-              {/* Premium Seasonal Toggle Strip */}
               <div className="bg-white p-2 border border-slate-200 rounded-xl shadow-sm flex gap-1.5 items-center">
                 <span className="font-bold text-slate-400 uppercase px-1 text-[9px] tracking-wider">Target Season:</span>
-                {["All", "Spring", "Summer", "Fall"].map((season) => (
+                {["All", "Spring", "Summer", "Fall", "Winter"].map((season) => (
                   <button
                     key={season}
                     onClick={() => setSelectedSeason(season)}
@@ -196,21 +269,29 @@ export default function Travel() {
                 ))}
               </div>
 
-              {/* Destination Cards Layout Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {displayedDestinations.map((dest) => (
                   <div key={dest.id} className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col relative group hover:border-slate-300 transition-all">
-                    
-                    {/* Minimal Clean Label Overlay */}
                     <span className="absolute top-2 right-2 text-[8px] font-bold uppercase bg-[#0A2540] text-white px-1.5 py-0.5 rounded tracking-widest shadow-sm">
                       {dest.season}
                     </span>
 
-                    <img src={dest.image_url} alt={dest.city} className="h-28 w-full object-cover grayscale-[15%] group-hover:grayscale-0 transition-all" />
+                    <img 
+                      src={dest.image_url} 
+                      alt={dest.city} 
+                      loading="lazy"
+                      className="h-28 w-full object-cover grayscale-[15%] group-hover:grayscale-0 transition-all" 
+                      onError={(e) => {
+                        // Fail-safe default placeholder image trigger if external network asset goes down
+                        e.target.src = "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80";
+                      }}
+                    />
                     
                     <div className="p-3 flex-1 flex flex-col justify-between">
                       <div>
-                        <h3 className="text-sm font-black text-[#0A2540] uppercase tracking-wide">{dest.city}, <span className="text-slate-400 font-semibold text-xs">{dest.country}</span></h3>
+                        <h3 className="text-sm font-black text-[#0A2540] uppercase tracking-wide">
+                          {dest.city}, <span className="text-slate-400 font-semibold text-xs">{dest.country}</span>
+                        </h3>
                         
                         <div className="mt-2.5 space-y-2 border-t border-slate-100 pt-2 text-[11px] text-slate-600">
                           <p><strong className="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">🍲 Featured Cuisine:</strong> {dest.popular_food}</p>
@@ -224,7 +305,7 @@ export default function Travel() {
 
               {displayedDestinations.length === 0 && (
                 <div className="bg-white border border-slate-200 rounded-xl p-6 text-center text-slate-400 font-bold uppercase tracking-wider text-[9px]">
-                  No logged items match this filter category.
+                  No items match your quiz inputs or selected seasonal filter.
                 </div>
               )}
             </div>
