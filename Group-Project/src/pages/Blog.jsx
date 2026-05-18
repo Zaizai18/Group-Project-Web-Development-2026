@@ -42,7 +42,7 @@ const BLOG_POSTS = [
     title: "Morocco in Winter: Souks, Spice & Silence",
     category: "Seasonal Travel",
     readTime: "6 min read",
-    image: "https://images.unsplash.com/photo-1539020140153-e479b8a58e3c?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=600&q=80",
     excerpt: "Winter is the best-kept secret of Moroccan travel. Fewer crowds, cooler temperatures, and the most atmospheric souks you'll ever walk through.",
     tag: "Moroccan",
     season: "Winter",
