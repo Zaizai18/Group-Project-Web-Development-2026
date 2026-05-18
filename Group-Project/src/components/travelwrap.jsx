@@ -25,7 +25,7 @@ const processCountries = (data) => {
 
     return Object.entries(trip_counts)
     .map(([name, s]) => {                              // just 's' instead of 'stats'
-        const activityEntries = Object.entries(s.activities || {});
+        const activityEntries = Object.entries(s?.activities ?? {});
         const topActivity = activityEntries.length > 0 
             ? activityEntries.reduce((a, b) => (a[1] > b[1] ? a : b))[0] 
             : "Exploration";
