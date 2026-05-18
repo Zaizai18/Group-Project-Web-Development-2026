@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient.js";
 
+// Helper function with a safety guard for Object.entries
 const processCountries = (data) => {
+    if (!data || data.length === 0) return []; // Guard Clause
+
     const likedTrips = data.filter(trip => trip.liked === true);
     const trip_counts = {};
 
@@ -17,9 +20,12 @@ const processCountries = (data) => {
         trip_counts[name].activities[activity] = (trip_counts[name].activities[activity] || 0) + 1;
     });
 
+    // Ensure trip_counts isn't empty before calling Object.entries
+    if (Object.keys(trip_counts).length === 0) return [];
+
     return Object.entries(trip_counts)
         .map(([name, stats]) => {
-            const activityEntries = Object.entries(stats.activities);
+            const activityEntries = Object.entries(stats.activities || {});
             const topActivity = activityEntries.length > 0 
                 ? activityEntries.reduce((a, b) => (a[1] > b[1] ? a : b))[0] 
                 : "Exploration";
@@ -43,46 +49,41 @@ function TravelWrap() {
     useEffect(() => {
         async function getMyData() {
             try {
-                // STEP 1: External API Fetch (Fulfills requirement)
+                // External API Fetch for the project requirement
                 const quoteRes = await fetch("https://api.quotable.io/random?tags=travel");
                 if (quoteRes.ok) {
                     const quoteData = await quoteRes.json();
                     setQuote({ text: quoteData.content, author: quoteData.author });
                 }
 
-                // STEP 2: Supabase Data Load
                 const { data, error } = await supabase
                     .from('reviews_page')
                     .select('*');
                 
                 if (!error && data) {
-                    // Logic-First: Filter here so 'likedTrips' is defined for the progress UI
-                    const likedTrips = data.filter(trip => trip.liked === true);
-                    setTotalLiked(likedTrips.length);
-
-                    const topFive = processCountries(data);
-                    setStats(topFive);
-                } else if (error) {
-                    console.error("SQL Fetch Error:", error.message);
+                    const likedCount = data.filter(trip => trip.liked === true).length;
+                    setTotalLiked(likedCount);
+                    
+                    const processed = processCountries(data);
+                    setStats(processed);
                 }
             } catch (err) {
-                console.error("Critical System Error:", err);
+                console.error("System Error:", err);
             } finally {
-                // Ensure the loading state is cleared regardless of success/fail
-                setLoading(false);
+                setLoading(false); // Clears the "Compiling" screen
             }
         }
         getMyData();
     }, []);
     
-    if (loading) return <div className="text-center p-10 font-medium text-gray-600 italic">Fetching system metrics and travel insights...</div>;
+    if (loading) return <div className="text-center p-10 font-medium text-gray-600">Compiling your global metrics footprint...</div>;
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-[#E5E5E5] rounded-xl shadow-md mt-8 text-gray-800">
-            {/* Travel Quote Section (API Requirement) */}
-            <div className="mb-6 p-4 bg-white rounded-lg border-l-4 border-[#0A2540] shadow-sm">
-                <p className="text-gray-700 italic">"{quote.text}"</p>
-                <p className="text-right text-xs font-bold text-[#0A2540] mt-1">— {quote.author}</p>
+            {/* Travel Quote (API) Section */}
+            <div className="mb-6 p-4 bg-white rounded-lg border-l-4 border-blue-500 italic shadow-sm">
+                <p className="text-gray-700">"{quote.text}"</p>
+                <p className="text-right text-xs font-bold text-blue-600 mt-1">— {quote.author}</p>
             </div>
 
             <h2 className="text-3xl font-extrabold text-[#0A2540] mb-4 text-center uppercase tracking-tight">Your Travel History Wrapped!</h2>
@@ -112,12 +113,10 @@ function TravelWrap() {
                     </table>
                 </>
             ) : (
-                <div className="text-center p-8 bg-white rounded-lg shadow-inner">
-                    <h2 className="text-xl font-bold text-[#0A2540] mb-2">Travel Wrapped Locked</h2>
-                    <p className="text-gray-600">You need to like more destinations to generate your report!</p>
-                    <p className="mt-4 font-mono text-blue-600 font-bold uppercase">
-                        Current Likes: {totalLiked}
-                    </p>
+                <div className="text-center p-8 bg-white rounded-lg">
+                    <h2 className="text-xl font-bold text-[#0A2540]">Travel Wrapped</h2>
+                    <p className="text-gray-600">Your wrap unlocks once you've liked some trips!</p>
+                    <p className="mt-4 font-mono text-blue-600 font-bold">Likes Found: {totalLiked}</p>
                 </div> 
             )}   
         </div>  
