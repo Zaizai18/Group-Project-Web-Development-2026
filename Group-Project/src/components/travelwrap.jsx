@@ -17,18 +17,6 @@ const processCountries = (data) => {
         trip_counts[name].activities[activity] = (trip_counts[name].activities[activity] || 0) + 1;
     });
 
-    const processedStats = Object.keys(trip_counts).map(name => ({
-        name: name,
-        count: trip_counts[name].total,
-        // This finds the activity with the highest count for this destination
-        topActivity: Object.entries(trip_counts[name].activites)
-            .sort((a, b) => b[1] - a[1])[0][0]
-    })).sort((a, b) => b.count - a.count); // Sort by highest visit count
-
-    // 3. UPDATE STATE
-    setStats(processedStats.slice(0, 5)); // Only keep the top 5
-    setLikedTripsCount(likedTrips.length);
-
     return Object.entries(trip_counts)
         .map(([name, stats]) => {
             const activityEntries = Object.entries(stats.activities);
