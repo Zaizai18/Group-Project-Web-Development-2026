@@ -37,14 +37,28 @@ const processCountries = (data) => {
 function TravelWrap() {
     const [stats, setStats] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [totalLiked, setTotalLiked] = useState(0); // Added this state
 
+    const [quote, setQuote] = useState({ text: "", author: "" });
     useEffect(() => {
         async function getMyData() {
+            try {
+                const quoteRes = await fetch("https://api.quotable.io/random?tags=travel");
+                const quoteData = await quoteRes.json();
+                setQuote({ text: quoteData.content, author: quoteData.author });
+            } catch (err) {
+                console.error("API Fetch error:", err);
+            }
+
             const { data, error } = await supabase
                 .from('reviews_page')
                 .select('*');
                 
             if (!error && data) {
+                // Count the liked trips before processing the top 5
+                const likedCount = data.filter(trip => trip.liked === true).length;
+                setTotalLiked(likedCount);
+
                 const topFive = processCountries(data);
                 setStats(topFive);
             } else {
@@ -59,39 +73,28 @@ function TravelWrap() {
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-[#E5E5E5] rounded-xl shadow-md mt-8 text-gray-800">
+            {/* Travel Quote Section (External API) */}
+            {quote.text && (
+                <div className="mb-6 p-4 bg-white rounded-lg border-l-4 border-blue-500 italic shadow-sm">
+                    <p className="text-gray-700">"{quote.text}"</p>
+                    <p className="text-right text-sm font-bold text-blue-600">— {quote.author}</p>
+                </div>
+            )}
+            
             <h2 className="text-3xl font-extrabold text-[#0A2540] mb-4 text-center uppercase tracking-tight">Your Travel History Wrapped!</h2>
             
             {stats.length > 0 ? (
                 <>
-                    <p className="text-lg text-center font-semibold mb-6 text-gray-700"> 
-                        You visited <span className="text-blue-600 underline font-bold">{stats[0].name}</span> the most! 
-                        Top highlight activity: <span className="italic">"{stats[0].topActivity}"</span>.
-                    </p>
-                    <table className="w-full bg-white rounded-lg overflow-hidden shadow">
-                        <thead className="bg-[#0A2540] text-white">
-                            <tr>
-                                <th className="p-3 text-left">Destination</th>
-                                <th className="p-3 text-left">Visits Registered</th>
-                                <th className="p-3 text-left">Top Recommended Activity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {stats.map((item, index) => (
-                                <tr key={index} className="border-b hover:bg-gray-50 transition-colors">
-                                    <td className="p-3 font-bold text-gray-900">{item.name}</td>
-                                    <td className="p-3 text-gray-600">{item.count} visits logged</td>
-                                    <td className="p-3 italic text-blue-800 font-medium">{item.topActivity}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    {/* ... (Keep your existing table JSX here) ... */}
                 </>
             ) : (
-            <div>
-                <h2>Travel Wrapped</h2>
-                <p>Keep exploring! Your travel wrap unlocks once you've liked more than 5 trips.</p>
-                <p>Current progress: {likedTrips.length} / 6</p>
-            </div> 
+                <div className="text-center p-6 bg-white rounded-lg">
+                    <h2 className="text-xl font-bold mb-2">Travel Wrapped Locked</h2>
+                    <p className="text-gray-600">Keep exploring! Your travel wrap unlocks once you've liked your first few trips.</p>
+                    <p className="mt-4 font-mono text-blue-600 font-bold">
+                        Current progress: {totalLiked} liked trips
+                    </p>
+                </div> 
             )}   
         </div>  
     );
