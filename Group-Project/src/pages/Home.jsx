@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import heroImage from '../assets/image/travel.webp'; 
 import HomeForm from '../components/homeForm'; 
+import { supabase } from "../utils/supabaseClient"; 
 
 export default function Home() {
   const formRef = useRef(null);
@@ -44,21 +45,27 @@ export default function Home() {
       dietary_restrictions: finalDietary
     }));
 
-    const { data, error } = await supabase
-    .from('reviews_page') // Make sure this matches your table name exactly
-    .insert([
-      { 
-        username: username,
-        cuisine: favoriteCuisine,
-        travel_months: selectedMonths, 
-        dietary_restrictions: finalDietary,
-        liked: true // Setting this to true so it shows up in your "Wrapped" logic
-      }
-    ]);
+    window.dispatchEvent(new Event("localPreferencesUpdated"));
 
-  if (error) {
-    console.error("Supabase Error:", error.message);
-  }
+    const { data, error } = await supabase
+      .from('reviews_page') 
+      .insert([
+        { 
+          username: username,
+          cuisine: favoriteCuisine,
+          travel_months: selectedMonths, 
+          dietary_restrictions: finalDietary,
+          liked: true,
+          destination_name: "Quiz Registration", 
+          suggestion_name: `Prefers ${favoriteCuisine || "Universal"} food`, 
+          feedback: "Initial dashboard setup from quiz." 
+        }
+      ]);
+
+    if (error) {
+      console.error("Supabase error:", error.message);
+    }
+
     alert("Preferences saved successfully! Let's tailor your journey.");
     
     setUsername('');
@@ -70,9 +77,7 @@ export default function Home() {
   };
   
   return (
-    /* 1. FIXED: Changed to an explicit block container to prevent footer compression bugs */
     <div className="w-full flex flex-col">
-      
       {/* Hero Banner Area */}
       <div 
         className="h-[600px] bg-cover bg-center relative flex items-center justify-center"
@@ -99,7 +104,6 @@ export default function Home() {
       </div>
 
       {/* Form Wrapper Section Container */}
-      {/* 2. BRAND ACCENT: Added shadow-brand-red here so the quiz highlights elegantly */}
       <div 
         ref={formRef} 
         className="bg-[#E5E5E5] text-gray-800 p-8 md:p-12 border-t border-gray-300 scroll-mt-6 shadow-brand-red"
@@ -122,7 +126,6 @@ export default function Home() {
           />
         </div>
       </div>
-      
     </div>
   );
-}
+} 
