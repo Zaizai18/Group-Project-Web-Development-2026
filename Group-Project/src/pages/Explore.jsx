@@ -11,7 +11,7 @@ const SPOTLIGHT_PINS = [
     dietary: ["Halal", "Vegetarian"],
     dish: "Fresh Tuna Sushi & Tamagoyaki Omelettes",
     activity: "Early morning fish market tasting walk",
-    img: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&w=400&q=80",
+    img: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=90",
     topOffset: "20%",
     leftOffset: "76%"
   },
@@ -25,7 +25,7 @@ const SPOTLIGHT_PINS = [
     dietary: ["Vegetarian"],
     dish: "Traditional Guanciale Carbonara",
     activity: "Alleyway restaurant exploration & espresso tasting",
-    img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=400&q=80",
+    img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=800&q=90",
     topOffset: "30%",
     leftOffset: "50%"
   },
@@ -39,7 +39,7 @@ const SPOTLIGHT_PINS = [
     dietary: ["Vegan", "Vegetarian"],
     dish: "Traditional Seafood Jimbaran BBQ",
     activity: "Cliffside temple tours and reef surfing",
-    img: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&q=80",
+    img: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=90",
     topOffset: "58%",
     leftOffset: "72%"
   },
@@ -53,7 +53,7 @@ const SPOTLIGHT_PINS = [
     dietary: ["Halal", "Vegan"],
     dish: "Lamb Tagine with Preserved Lemons",
     activity: "Night market food stalls & storyteller circles",
-    img: "https://images.unsplash.com/photo-1539020140153-e479b8a58e3c?auto=format&fit=crop&w=400&q=80",
+    img: "https://images.unsplash.com/photo-1539020140153-e479b8a58e3c?auto=format&fit=crop&w=800&q=90",
     topOffset: "38%",
     leftOffset: "44%"
   },
@@ -67,7 +67,7 @@ const SPOTLIGHT_PINS = [
     dietary: ["Vegan", "Vegetarian"],
     dish: "Curanto — traditional Chilean earth oven feast",
     activity: "W Trek — 80km through glaciers and granite towers",
-    img: "https://images.unsplash.com/photo-1504609813442-a8924e83f76e?auto=format&fit=crop&w=400&q=80",
+    img: "https://images.unsplash.com/photo-1504609813442-a8924e83f76e?auto=format&fit=crop&w=800&q=90",
     topOffset: "78%",
     leftOffset: "28%"
   },
@@ -81,7 +81,7 @@ const SPOTLIGHT_PINS = [
     dietary: ["Halal", "Vegan", "Vegetarian"],
     dish: "Karimeen Pollichathu — banana leaf grilled fish",
     activity: "Houseboat cruise through monsoon backwaters",
-    img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=400&q=80",
+    img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=90",
     topOffset: "45%",
     leftOffset: "64%"
   },
@@ -95,7 +95,7 @@ const SPOTLIGHT_PINS = [
     dietary: ["Vegan", "Vegetarian"],
     dish: "Mala Sichuan Hotpot with hand-mixed dipping sauce",
     activity: "Evening hotpot under ginkgo trees + panda reserve",
-    img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80",
+    img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=90",
     topOffset: "28%",
     leftOffset: "68%"
   },
@@ -109,7 +109,7 @@ const SPOTLIGHT_PINS = [
     dietary: ["Halal"],
     dish: "Balık Ekmek — fresh Bosphorus mackerel sandwich",
     activity: "Asian side market walk + ferry crossing at sunset",
-    img: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=400&q=80",
+    img: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=800&q=90",
     topOffset: "25%",
     leftOffset: "56%"
   },
@@ -123,7 +123,7 @@ const SPOTLIGHT_PINS = [
     dietary: ["Vegetarian"],
     dish: "Otago lamb rack with local pinot noir",
     activity: "Bungee jumping, paragliding, and glacier hiking",
-    img: "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=400&q=80",
+    img: "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=800&q=90",
     topOffset: "82%",
     leftOffset: "82%"
   }
